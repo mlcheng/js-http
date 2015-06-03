@@ -35,13 +35,17 @@ function $http(url) {
 
 
 			if($http.prototype.client.readyState == 4) {
-				var response;
-				try {
-					response = JSON.parse($http.prototype.client.responseText);
-				} catch(e) {
-					response = $http.prototype.client.responseText;
+				if($http.prototype.client.status == 200) {
+					var response;
+					try {
+						response = JSON.parse($http.prototype.client.responseText);
+					} catch(e) {
+						response = $http.prototype.client.responseText;
+					}
+					callbacks.success(response);
+				} else {
+					callbacks.error($http.prototype.client.status);
 				}
-				callbacks.success(response);
 
 				// destroy everything
 				response = null;

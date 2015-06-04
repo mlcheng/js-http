@@ -13,9 +13,9 @@ Usage is extremely simple. To do an asynchronous call, just write
 		});
 		.get("param=value")
 
-`data.php` is your data source. The `get()` parameters specify what parameters to send with the request. `.post()`, `.put()`, and `.delete()` may also be used.
+`data.php` is your data source. The `.success()` callback delivers a `response` parameter to your callback. This is called when the request succeeds and the status is OK. The `response` will be parsed as JSON if possible, otherwise plain text will be delivered to your callback.
 
-The `.success()` callback delivers a `response` parameter to your callback. This is called when the request succeeds and the status is OK. The `response` will be parsed as JSON if possible, otherwise plain text will be delivered to your callback.
+The `get()` parameters specify what parameters to send with the request. `.post()`, `.put()`, and `.delete()` may also be used. These request methods should be called *last*.
 
 ## Advanced usage
 In addition to the `.success()` callback, you may also set the following callbacks

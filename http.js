@@ -15,7 +15,7 @@
  *
  * $http(your_url_here).get|post|put|delete(params)
  *
- * To use the result of the request, add a callback to the request
+ * To use the result of the request, add a callback to the beginning of the request
  *
  * .stateChanged(stateChangedCallback) // This is called when the request state changes. The stateChangedCallback will receive a parameter with the current state
  *
@@ -25,7 +25,7 @@
  *
  * 
  * @param  {String} url The URL to get asynchronous data from
- * @return {Object}     The userCallbacks object, used to chain callback methods for the request status
+ * @return      Should return nothing
  */
 function $http(url) {
 	function ajax(method, url, args) {
@@ -44,9 +44,6 @@ function $http(url) {
 			return out;
 		})(url, args);
 
-
-		$http.prototype.client.open(method, uri, true);
-		$http.prototype.client.send();
 		$http.prototype.client.onreadystatechange = function() {
 			if(typeof callbacks.stateChanged === "function") {
 				// State has changed, call stateChanged callback
@@ -81,22 +78,24 @@ function $http(url) {
 				this.callbacks = null;
 			}
 		};
-
-		return userCallbacks;
+		$http.prototype.client.open(method, uri, true);
+		$http.prototype.client.send();
 	};
 
-	
+
 	/**
-	 * An object containing the callbacks that can be assigned to the request
+	 * Stores the user defined callbacks
 	 * @type {Object}
 	 */
-	var userCallbacks = {
+	var callbacks = {};
+
+	return {
 		/**
 		 * Called when the request state changes. The state will be 4 when the request succeeds
 		 * @param  {Function} callback The function to call when the state changes
-		 * @return {[Object]}          The userCallbacks object for chaining
+		 * @return {Object}            The $http object
 		 */
-		stateChanged: function(callback) {
+		'stateChanged': function(callback) {
 			callbacks.stateChanged = callback;
 			return this;
 		},
@@ -106,7 +105,7 @@ function $http(url) {
 		 * @param  {Function} callback The function to call when the request succeeds
 		 * @return {Object}            The userCallbacks object
 		 */
-		success: function(callback) {
+		'success': function(callback) {
 			callbacks.success = callback;
 			return this;
 		},
@@ -116,19 +115,11 @@ function $http(url) {
 		 * @param  {Function} callback The function to call when the request fails
 		 * @return {Object}            The userCallbacks object
 		 */
-		error: function(callback) {
+		'error': function(callback) {
 			callbacks.error = callback;
 			return this;
-		}
-	};
+		},
 
-	/**
-	 * Stores the user defined callbacks
-	 * @type {Object}
-	 */
-	var callbacks = {};
-
-	return {
 		'get': function(args) {
 			return ajax('get', url, args);
 		},

@@ -8,10 +8,10 @@ A demo is available on my [playground](http://www.michaelcheng.us/playground/lib
 Usage is extremely simple. To do an asynchronous call, just write
 
 	$http("data.php")
-		.get("param=value")
 		.success(function(response) {
 			console.log(response);
 		});
+		.get("param=value")
 
 `data.php` is your data source. The `get()` parameters specify what parameters to send with the request. `.post()`, `.put()`, and `.delete()` may also be used.
 
@@ -24,14 +24,14 @@ In addition to the `.success()` callback, you may also set the following callbac
 The AJAX request has several `readyState`s (from `1`-`4`). A `readyState` of `4` means that the response is ready to be returned. When the state changes, you can set a callback to be executed.
 
 	$http("data.php")
-		.get()
 		.stateChanged(function(state) {
 			if(state != 4) {
 				console.log("Still loading...");
 			} else {
 				console.log("Finished loading!");
 			}
-		});
+		})
+		.get();
 
 The `stateChanged` callback will receive a parameter that specifies the current state of the request.
 
@@ -39,9 +39,9 @@ The `stateChanged` callback will receive a parameter that specifies the current 
 If the request is sent out but fails to get information, an error is called. Basically, if the HTTP status code isn't 200, your error callback will be executed.
 
 	$http("data.php")
-		.get()
 		.success(callbacks.success)
-		.error(callbacks.error);
+		.error(callbacks.error)
+		.get();
 
 Where `callbacks` is an object containing your callbacks
 

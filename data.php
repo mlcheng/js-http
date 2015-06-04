@@ -9,6 +9,6 @@
             --All Rights Reserved--
 
 ***********************************************/
-
+sleep(1);
 echo "The random number is " . mt_rand($_GET['min'], $_GET['max']);
 ?>

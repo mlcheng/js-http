@@ -1,6 +1,6 @@
 # js-http
 
-This is a library to simplify asynchronous calls for data. Obviously, doing an `XMLHttpRequest` is rather trivial, but sometimes it's convenient to be able to do an AJAX call in only a few seconds. Obviously, something like angular already has this, but if you only need a light-weight library for AJAX, this is right for you.
+This is a library to simplify asynchronous calls for data. Doing an `XMLHttpRequest` is rather trivial, but sometimes it's convenient to be able to do an AJAX call in only a few seconds. Obviously, something like angular already has this, but if you only need a light-weight library for AJAX, this is right for you.
 
 A demo is available on my [playground](http://www.michaelcheng.us/playground/lib-js/http/).
 

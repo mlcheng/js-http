@@ -81,7 +81,7 @@ function $http(url) {
 			 * The request is in progress. Used in file uploads or similar
 			 * The ProgressEvent will be passed to the callback
 			 */
-			$http.prototype.client.onprogress = function(e) {
+			$http.prototype.client.upload.onprogress = function(e) {
 				callbacks.onProgress(e);
 			};
 		}

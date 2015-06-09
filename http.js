@@ -29,6 +29,8 @@
  */
 function $http(url) {
 	function ajax(method, url, args) {
+		var client = new XMLHttpRequest();
+
 		var data; // the data to send with the request; only used when not GET
 
 		/**
@@ -72,7 +74,7 @@ function $http(url) {
 			 * The request has just been sent.
 			 * The readyState will be passed to the callback
 			 */
-			$http.prototype.client.onloadstart = function(e) {
+			client.onloadstart = function(e) {
 				callbacks.onLoadStart(this.readyState);
 			};
 		}
@@ -81,7 +83,7 @@ function $http(url) {
 			 * The request is in progress. Used in file uploads or similar
 			 * The ProgressEvent will be passed to the callback
 			 */
-			$http.prototype.client.upload.onprogress = function(e) {
+			client.upload.onprogress = function(e) {
 				callbacks.onProgress(e);
 			};
 		}
@@ -90,7 +92,7 @@ function $http(url) {
 			 * The request encountered an error
 			 * The HTTP status will be passed to the callback
 			 */
-			$http.prototype.client.onerror = function(e) {
+			client.onerror = function(e) {
 				callbacks.onError(this.status);
 			};
 		}
@@ -100,17 +102,19 @@ function $http(url) {
 			 * If the HTTP status is OK, the response will be passed to the callback
 			 * Otherwise, the HTTP status will be passed to the callback
 			 */
-			$http.prototype.client.onload = function(e) {
+			client.onload = function(e) {
 				if(this.status == 200) {
 					callbacks.onLoad(this.response);
 				} else {
 					callbacks.onError(this.status);
 				}
+				
+				client = null;
 			};
 		}
 
-		$http.prototype.client.open(method, url, true);
-		$http.prototype.client.send(data);
+		client.open(method, url, true);
+		client.send(data);
 	};
 
 
@@ -177,9 +181,3 @@ function $http(url) {
 		}
 	};
 };
-
-/**
- * Initialize the http request client
- * @type {Object}
- */
-$http.prototype.client = window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest;

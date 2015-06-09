@@ -10,5 +10,7 @@
 
 ***********************************************/
 sleep(1);
-echo "The random number is " . mt_rand($_GET['min'], $_GET['max']);
+if(isset($_GET['min'])) {
+	echo "The random number is " . mt_rand($_GET['min'], $_GET['max']);
+}
 ?>

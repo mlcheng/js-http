@@ -29,57 +29,88 @@
  */
 function $http(url) {
 	function ajax(method, url, args) {
-		// encode the url with the parameters
-		var uri = (function encode(url, args) {
-			var out = url + "?";
-			var arg_cnt = 0;
-			for(var key in args) {
-				if(args.hasOwnProperty(key)) {
-					if(arg_cnt++) {
-						out += "&";
-					} 
-					out += encodeURIComponent(key) + "=" + encodeURIComponent(args[key]);
+		var data; // the data to send with the request; only used when not GET
+
+		/**
+		 * If the method is "get", the parameters are sent as a part of the URL.
+		 * There should be no other data to send with the request
+		 */
+		if(method == "get") {
+			// encode the url with the parameters
+			url = (function encode(url, args) {
+				var out = url + "?";
+				var arg_cnt = 0;
+				for(var key in args) {
+					if(args.hasOwnProperty(key)) {
+						if(arg_cnt++) {
+							out += "&";
+						} 
+						out += encodeURIComponent(key) + "=" + encodeURIComponent(args[key]);
+					}
 				}
-			}
-			return out;
-		})(url, args);
+				return out;
+			})(url, args);
+			data = null;
+		} else {
+			// append the parameters as part of FormData
+			data = new FormData();
+			Object.keys(args).forEach(function(value, index, array) {
+				data.append(value, args[value]);
+			});
+		}
+		
+		
 
-		$http.prototype.client.onreadystatechange = function() {
-			if(typeof callbacks.stateChanged === "function") {
-				// State has changed, call stateChanged callback
-				callbacks.stateChanged($http.prototype.client.readyState);
-			}
 
 
-			if($http.prototype.client.readyState == 4) {
-				if($http.prototype.client.status == 200) {
-					var response;
-					try {
-						// Parse the response as JSON data if possible
-						response = JSON.parse($http.prototype.client.responseText);
-					} catch(e) {
-						response = $http.prototype.client.responseText;
-					}
-
-					if(typeof callbacks.success === "function") {
-						callbacks.success(response);
-					}
+		/**
+		 * Event callbacks are here
+		 */
+		
+		if(typeof callbacks.onLoadStart === "function") {
+			/**
+			 * The request has just been sent.
+			 * The readyState will be passed to the callback
+			 */
+			$http.prototype.client.onloadstart = function(e) {
+				callbacks.onLoadStart(this.readyState);
+			};
+		}
+		if(typeof callbacks.onProgress === "function") {
+			/**
+			 * The request is in progress. Used in file uploads or similar
+			 * The ProgressEvent will be passed to the callback
+			 */
+			$http.prototype.client.onprogress = function(e) {
+				callbacks.onProgress(e);
+			};
+		}
+		if(typeof callbacks.onError === "function") {
+			/**
+			 * The request encountered an error
+			 * The HTTP status will be passed to the callback
+			 */
+			$http.prototype.client.onerror = function(e) {
+				callbacks.onError(this.status);
+			};
+		}
+		if(typeof callbacks.onLoad === "function") {
+			/**
+			 * The request has finished.
+			 * If the HTTP status is OK, the response will be passed to the callback
+			 * Otherwise, the HTTP status will be passed to the callback
+			 */
+			$http.prototype.client.onload = function(e) {
+				if(this.status == 200) {
+					callbacks.onLoad(this.response);
 				} else {
-					// Status wasn't OK, so call error callback
-					if(typeof callbacks.error === "function") {
-						callbacks.error($http.prototype.client.status);
-					}
+					callbacks.onError(this.status);
 				}
+			};
+		}
 
-				// destroy everything
-				response = null;
-				url = null;
-				this.userCallbacks = null;
-				this.callbacks = null;
-			}
-		};
-		$http.prototype.client.open(method, uri, true);
-		$http.prototype.client.send();
+		$http.prototype.client.open(method, url, true);
+		$http.prototype.client.send(data);
 	};
 
 
@@ -90,13 +121,13 @@ function $http(url) {
 	var callbacks = {};
 
 	return {
-		/**
-		 * Called when the request state changes. The state will be 4 when the request succeeds
-		 * @param  {Function} callback The function to call when the state changes
-		 * @return {Object}            The $http object
-		 */
-		'stateChanged': function(callback) {
-			callbacks.stateChanged = callback;
+		'begin': function(callback) {
+			callbacks.onLoadStart = callback;
+			return this;
+		},
+
+		'progress': function(callback) {
+			callbacks.onProgress = callback;
 			return this;
 		},
 
@@ -106,7 +137,7 @@ function $http(url) {
 		 * @return {Object}            The userCallbacks object
 		 */
 		'success': function(callback) {
-			callbacks.success = callback;
+			callbacks.onLoad = callback;
 			return this;
 		},
 
@@ -116,20 +147,20 @@ function $http(url) {
 		 * @return {Object}            The userCallbacks object
 		 */
 		'error': function(callback) {
-			callbacks.error = callback;
+			callbacks.onError = callback;
 			return this;
 		},
 
 		'get': function(args) {
 			return ajax('get', url, args);
 		},
-		'post': function() {
+		'post': function(args) {
 			return ajax('post', url, args);
 		},
-		'put': function() {
+		'put': function(args) {
 			return ajax('put', url, args);
 		},
-		'delete': function() {
+		'delete': function(args) {
 			return ajax('delete', url, args);
 		}
 	};

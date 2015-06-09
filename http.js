@@ -29,9 +29,11 @@
  */
 function $http(url) {
 	function ajax(method, url, args) {
-		var client = new XMLHttpRequest();
+		var client = new XMLHttpRequest(); // the request client
 
 		var data; // the data to send with the request; only used when not GET
+
+
 
 		/**
 		 * If the method is "get", the parameters are sent as a part of the URL.
@@ -108,8 +110,12 @@ function $http(url) {
 				} else {
 					callbacks.onError(this.status);
 				}
-				
+
+
+				// clean up
 				client = null;
+				data = null;
+				callbacks = null;
 			};
 		}
 
@@ -123,6 +129,7 @@ function $http(url) {
 	 * @type {Object}
 	 */
 	var callbacks = {};
+
 
 	return {
 		/**

@@ -121,12 +121,23 @@ function $http(url) {
 	var callbacks = {};
 
 	return {
-		'begin': function(callback) {
+		/**
+		 * Called when the request just begins
+		 * @param  {Function} callback The function to call when the request begins
+		 * @return {Object}            The $http object
+		 */
+		"begin": function(callback) {
 			callbacks.onLoadStart = callback;
 			return this;
 		},
 
-		'progress': function(callback) {
+		/**
+		 * The request is in progress
+		 * @param  {Function} callback The function to call when the request is in progress.
+		 * Used in file uploads
+		 * @return {Object}            The $http object
+		 */
+		"progress": function(callback) {
 			callbacks.onProgress = callback;
 			return this;
 		},
@@ -134,9 +145,9 @@ function $http(url) {
 		/**
 		 * Called when the request succeeds with a status of 200
 		 * @param  {Function} callback The function to call when the request succeeds
-		 * @return {Object}            The userCallbacks object
+		 * @return {Object}            The $http object
 		 */
-		'success': function(callback) {
+		"success": function(callback) {
 			callbacks.onLoad = callback;
 			return this;
 		},
@@ -144,23 +155,24 @@ function $http(url) {
 		/**
 		 * Called when the request is sent but doesn't receive 200 status
 		 * @param  {Function} callback The function to call when the request fails
-		 * @return {Object}            The userCallbacks object
+		 * @return {Object}            The $http object
 		 */
-		'error': function(callback) {
+		"error": function(callback) {
 			callbacks.onError = callback;
 			return this;
 		},
 
-		'get': function(args) {
+
+		"get": function(args) {
 			return ajax('get', url, args);
 		},
-		'post': function(args) {
+		"post": function(args) {
 			return ajax('post', url, args);
 		},
-		'put': function(args) {
+		"put": function(args) {
 			return ajax('put', url, args);
 		},
-		'delete': function(args) {
+		"delete": function(args) {
 			return ajax('delete', url, args);
 		}
 	};

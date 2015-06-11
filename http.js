@@ -28,8 +28,8 @@
  * @return      Should return nothing
  */
 function $http(url) {
-	function ajax(method, url, args) {
-		var client = new XMLHttpRequest(); // the request client
+	function request(method, url, args) {
+		var client = new XMLHttpRequest(); // the request client; kill IE support
 
 		var data; // the data to send with the request; only used when not GET
 
@@ -175,16 +175,16 @@ function $http(url) {
 
 
 		"get": function(args) {
-			return ajax('get', url, args);
+			return request('get', url, args);
 		},
 		"post": function(args) {
-			return ajax('post', url, args);
+			return request('post', url, args);
 		},
 		"put": function(args) {
-			return ajax('put', url, args);
+			return request('put', url, args);
 		},
 		"delete": function(args) {
-			return ajax('delete', url, args);
+			return request('delete', url, args);
 		}
 	};
 };

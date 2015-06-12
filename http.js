@@ -29,6 +29,8 @@
  */
 function $http(url) {
 	function request(method, url, args) {
+		var STATUS_OK = 200; // the HTML status code for an OK request
+
 		var client = new XMLHttpRequest(); // the request client; kill IE support
 
 		var data; // the data to send with the request; only used when not GET
@@ -105,7 +107,7 @@ function $http(url) {
 			 * Otherwise, the HTTP status will be passed to the callback
 			 */
 			client.onload = function(e) {
-				if(this.status == 200) {
+				if(this.status == STATUS_OK) {
 					callbacks.onLoad(this.response);
 				} else {
 					callbacks.onError(this.status);

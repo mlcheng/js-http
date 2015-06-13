@@ -17,7 +17,7 @@ $http("data.php")
 
 `data.php` is your data source. The `.success()` callback delivers a `response` parameter to your callback. This is called when the request succeeds and the status is OK. The `response` will be parsed as JSON if possible, otherwise plain text will be delivered to your callback.
 
-The `get()` parameters specify what parameters to send with the request. `.post()`, `.put()`, and `.delete()` may also be used. These request methods should be called *last*.
+The `get()` parameters specify what parameters to send with the request. `.post()`, `.put()`, and `.delete()` HTTP methods may also be used. These request methods should be called *last*.
 
 ## Advanced usage
 In addition to the `.success()` callback, you may also set the following callbacks
@@ -33,7 +33,7 @@ $http("data.php")
 	.get();
 ```
 
-The `stateChanged` callback will receive a parameter that specifies the current state of the request.
+The `begin` callback will receive a parameter that specifies the current state of the request.
 
 ### `progress`
 If you are uploading a file, you can receive `ProgressEvent` callbacks to get the current status of the upload.
@@ -42,7 +42,7 @@ If you are uploading a file, you can receive `ProgressEvent` callbacks to get th
 $http("data.php")
 	.progress(function(event) {
 		if(event.lengthComputable) {
-			console.log("Upload status is " + ((event.loaded/e.total)*100) + "%");
+			console.log("Upload status is " + Math.floor((event.loaded/e.total)*100) + "%");
 		}
 	})
 	.post({"file": new File(["Hello"], "file.txt")});

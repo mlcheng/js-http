@@ -100,26 +100,25 @@ function $http(url) {
 				callbacks.onError(this.status);
 			};
 		}
-		if(typeof callbacks.onLoad === "function") {
-			/**
-			 * The request has finished.
-			 * If the HTTP status is OK, the response will be passed to the callback
-			 * Otherwise, the HTTP status will be passed to the callback
-			 */
-			client.onload = function(e) {
+
+		/**
+		 * The request has finished.
+		 * If the HTTP status is OK, the response will be passed to the callback
+		 * Otherwise, the HTTP status will be passed to the callback
+		 */
+		client.onload = function(e) {
+			if(typeof callbacks.onLoad === "function") {
 				if(this.status == STATUS_OK) {
 					callbacks.onLoad(this.response);
 				} else {
 					callbacks.onError(this.status);
 				}
+			}
 
-
-				// clean up
-				client = null;
-				data = null;
-				callbacks = null;
-			};
-		}
+			client = null;
+			data = null;
+			callbacks = null;
+		};
 
 		client.open(method, url, true);
 		client.send(data);

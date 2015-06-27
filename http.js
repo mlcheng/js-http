@@ -60,8 +60,8 @@ function $http(url) {
 		} else {
 			// append the parameters as part of FormData
 			data = new FormData();
-			Object.keys(args).forEach(function(value, index, array) {
-				data.append(value, args[value]);
+			Object.keys(args).forEach(function(arg) {
+				data.append(arg, args[arg]);
 			});
 		}
 		

@@ -175,6 +175,9 @@ function $http(url) {
 		},
 
 
+		/**
+		 * HTTP methods
+		 */
 		"get": function(args) {
 			return request('get', url, args);
 		},

@@ -41,7 +41,7 @@ function $http(url) {
 		 * If the method is "get", the parameters are sent as a part of the URL.
 		 * There should be no other data to send with the request
 		 */
-		if(method == "get") {
+		if(method === "get") {
 			// encode the url with the parameters
 			url = (function encode(url, args) {
 				var out = url + "?";
@@ -108,7 +108,7 @@ function $http(url) {
 		 */
 		client.onload = function(e) {
 			if(typeof callbacks.onLoad === "function") {
-				if(this.status == STATUS_OK) {
+				if(this.status === STATUS_OK) {
 					callbacks.onLoad(this.response);
 				} else {
 					callbacks.onError(this.status);

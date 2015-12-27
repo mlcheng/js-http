@@ -9,7 +9,7 @@
 
 ***********************************************/
 
-"use strict";
+'use strict';
 /**
  * A library to simplify AJAX calls. The most basic request syntax is as follows
  *
@@ -38,20 +38,20 @@ function $http(url) {
 
 
 		/**
-		 * If the method is "get", the parameters are sent as a part of the URL.
+		 * If the method is 'get', the parameters are sent as a part of the URL.
 		 * There should be no other data to send with the request
 		 */
-		if(method === "get") {
+		if(method === 'get') {
 			// encode the url with the parameters
 			url = (function encode(url, args) {
-				var out = url + "?";
+				var out = url + '?';
 				var arg_cnt = 0;
 				for(var key in args) {
 					if(args.hasOwnProperty(key)) {
 						if(arg_cnt++) {
-							out += "&";
+							out += '&';
 						} 
-						out += encodeURIComponent(key) + "=" + encodeURIComponent(args[key]);
+						out += encodeURIComponent(key) + '=' + encodeURIComponent(args[key]);
 					}
 				}
 				return out;
@@ -73,7 +73,7 @@ function $http(url) {
 		 * Event callbacks are here
 		 */
 		
-		if(typeof callbacks.onLoadStart === "function") {
+		if(typeof callbacks.onLoadStart === 'function') {
 			/**
 			 * The request has just been sent.
 			 * The readyState will be passed to the callback
@@ -82,7 +82,7 @@ function $http(url) {
 				callbacks.onLoadStart(this.readyState);
 			};
 		}
-		if(typeof callbacks.onProgress === "function") {
+		if(typeof callbacks.onProgress === 'function') {
 			/**
 			 * The request is in progress. Used in file uploads or similar
 			 * The ProgressEvent will be passed to the callback
@@ -91,7 +91,7 @@ function $http(url) {
 				callbacks.onProgress(e);
 			};
 		}
-		if(typeof callbacks.onError === "function") {
+		if(typeof callbacks.onError === 'function') {
 			/**
 			 * The request encountered an error
 			 * The HTTP status will be passed to the callback
@@ -107,7 +107,7 @@ function $http(url) {
 		 * Otherwise, the HTTP status will be passed to the callback
 		 */
 		client.onload = function(e) {
-			if(typeof callbacks.onLoad === "function") {
+			if(typeof callbacks.onLoad === 'function') {
 				if(this.status === STATUS_OK) {
 					callbacks.onLoad(this.response);
 				} else {
@@ -138,7 +138,7 @@ function $http(url) {
 		 * @param  {Function} callback The function to call when the request begins
 		 * @return {Object}            The $http object
 		 */
-		"begin": function(callback) {
+		'begin': function(callback) {
 			callbacks.onLoadStart = callback;
 			return this;
 		},
@@ -149,7 +149,7 @@ function $http(url) {
 		 * Used in file uploads
 		 * @return {Object}            The $http object
 		 */
-		"progress": function(callback) {
+		'progress': function(callback) {
 			callbacks.onProgress = callback;
 			return this;
 		},
@@ -159,7 +159,7 @@ function $http(url) {
 		 * @param  {Function} callback The function to call when the request succeeds
 		 * @return {Object}            The $http object
 		 */
-		"success": function(callback) {
+		'success': function(callback) {
 			callbacks.onLoad = callback;
 			return this;
 		},
@@ -169,7 +169,7 @@ function $http(url) {
 		 * @param  {Function} callback The function to call when the request fails
 		 * @return {Object}            The $http object
 		 */
-		"error": function(callback) {
+		'error': function(callback) {
 			callbacks.onError = callback;
 			return this;
 		},
@@ -178,16 +178,16 @@ function $http(url) {
 		/**
 		 * HTTP methods
 		 */
-		"get": function(args) {
+		'get': function(args) {
 			return request('get', url, args);
 		},
-		"post": function(args) {
+		'post': function(args) {
 			return request('post', url, args);
 		},
-		"put": function(args) {
+		'put': function(args) {
 			return request('put', url, args);
 		},
-		"delete": function(args) {
+		'delete': function(args) {
 			return request('delete', url, args);
 		}
 	};

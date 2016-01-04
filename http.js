@@ -111,7 +111,9 @@ function $http(url) {
 				if(this.status === STATUS_OK) {
 					callbacks.onLoad(this.response);
 				} else {
-					callbacks.onError(this.status);
+					if(typeof callbacks.onError === 'function') {
+						callbacks.onError(this.status);
+					}
 				}
 			}
 

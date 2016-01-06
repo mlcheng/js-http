@@ -44,6 +44,8 @@ function $http(url) {
 		if(method === 'get') {
 			// encode the url with the parameters
 			url = (function encode(url, args) {
+				if(!args) return url;
+				
 				var out = url + '?';
 				var arg_cnt = 0;
 				for(var key in args) {

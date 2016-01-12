@@ -2,7 +2,7 @@
 
 This is a library to simplify asynchronous calls for data. Doing an `XMLHttpRequest` is rather trivial, but sometimes it's convenient to be able to do an AJAX call in only a few seconds. Obviously, something like angular already has this, but if you only need a light-weight library for AJAX, this is right for you.
 
-A demo is available on my [playground](http://www.michaelcheng.us/playground/lib-js/http/).
+A demo is available on my [playground](https://www.michaelcheng.us/playground/lib-js/http/).
 
 ## Usage
 Usage is extremely simple. To do an asynchronous call, just write

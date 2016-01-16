@@ -10,6 +10,35 @@
 ***********************************************/
 
 'use strict';
+
+var iqwerty = iqwerty || {};
+
+iqwerty.http = (function() {
+	/**
+	 * Cache GET requests if specified
+	 */
+	function Cache() {
+		var exports = {};
+
+		exports.getCache = url => Cache.prototype.cached[Object.keys(Cache.prototype.cached).find(key => url === key)];
+
+		exports.setCache = (url, data) => {
+			if(exports.getCache(url) != null) return;
+			Cache.prototype.cached[url] = data;
+		};
+
+		return exports;
+	}
+
+	Cache.prototype.cached = {};
+
+
+	return {
+		Request: $http,
+		Cache: Cache
+	};
+})();
+
 /**
  * A library to simplify AJAX calls. The most basic request syntax is as follows
  *
@@ -28,12 +57,36 @@
  * @return      Should return nothing
  */
 function $http(url) {
+	var Method = {
+		GET: 'get',
+		POST: 'post',
+		PUT: 'put',
+		DELETE: 'delete'
+	};
+
+	var Status = {
+		OK: 200
+	};
+
 	function request(method, url, args) {
-		var STATUS_OK = 200; // the HTML status code for an OK request
 
-		var client = new XMLHttpRequest(); // the request client; kill IE support
+		//Check for cached version first
+		if(method === Method.GET) {
+			var _cache = iqwerty.http.Cache().getCache(url);
+			if(_cache != null) {
+				if(typeof callbacks.onLoad === 'function') {
+					return callbacks.onLoad(_cache);
+				} else {
+					return;
+				}
+			}
+		}
 
-		var data; // the data to send with the request; only used when not GET
+		//The request client; kill IE support
+		var client = new XMLHttpRequest();
+
+		//The data to send with the request; only used when not GET
+		var data;
 
 
 
@@ -41,7 +94,7 @@ function $http(url) {
 		 * If the method is 'get', the parameters are sent as a part of the URL.
 		 * There should be no other data to send with the request
 		 */
-		if(method === 'get') {
+		if(method === Method.GET) {
 			// encode the url with the parameters
 			url = (function encode(url, args) {
 				if(!args) return url;
@@ -109,8 +162,11 @@ function $http(url) {
 		 * Otherwise, the HTTP status will be passed to the callback
 		 */
 		client.onload = function(e) {
+			if(config.cache && method === Method.GET) {
+				iqwerty.http.Cache().setCache(url, this.response);
+			}
 			if(typeof callbacks.onLoad === 'function') {
-				if(this.status === STATUS_OK) {
+				if(this.status === Status.OK) {
 					callbacks.onLoad(this.response);
 				} else {
 					if(typeof callbacks.onError === 'function') {
@@ -135,8 +191,23 @@ function $http(url) {
 	 */
 	var callbacks = {};
 
+	/**
+	 * Stores the config for this request
+	 * @type {Object}
+	 */
+	var config = {};
+
 
 	return {
+		/**
+		 * Optional. Cache GET requests
+		 * @return {Object} The $http object
+		 */
+		'cache': function() {
+			config.cache = true;
+			return this;
+		},
+
 		/**
 		 * Called when the request just begins
 		 * @param  {Function} callback The function to call when the request begins
@@ -183,16 +254,16 @@ function $http(url) {
 		 * HTTP methods
 		 */
 		'get': function(args) {
-			return request('get', url, args);
+			return request(Method.GET, url, args);
 		},
 		'post': function(args) {
-			return request('post', url, args);
+			return request(Method.POST, url, args);
 		},
 		'put': function(args) {
-			return request('put', url, args);
+			return request(Method.PUT, url, args);
 		},
 		'delete': function(args) {
-			return request('delete', url, args);
+			return request(Method.DELETE, url, args);
 		}
 	};
 };

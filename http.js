@@ -182,7 +182,7 @@ function $http(url) {
 
 		client.open(method, url, true);
 		client.send(data);
-	};
+	}
 
 
 	/**
@@ -266,4 +266,4 @@ function $http(url) {
 			return request(Method.DELETE, url, args);
 		}
 	};
-};
+}

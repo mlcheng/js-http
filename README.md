@@ -71,3 +71,15 @@ var callbacks = {
 	}
 };
 ```
+
+### `cache`
+If you wish to cache your `GET` requests, simply specify `.cache()` in your request builder
+
+```javascript
+$http("data.php")
+	.success(callbacks.success)
+	.cache()
+	.get();
+```
+
+The next time you request `data.php`, you will retrieve the cached version. Cache invalidation will come soon.

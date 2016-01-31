@@ -68,6 +68,18 @@ function $http(url) {
 		OK: 200
 	};
 
+	/**
+	 * Stores the user defined callbacks
+	 * @type {Object}
+	 */
+	var callbacks = {};
+
+	/**
+	 * Stores the config for this request
+	 * @type {Object}
+	 */
+	var config = {};
+
 	function request(method, url, args) {
 
 		//Check for cached version first
@@ -133,7 +145,7 @@ function $http(url) {
 			 * The request has just been sent.
 			 * The readyState will be passed to the callback
 			 */
-			client.onloadstart = function(e) {
+			client.onloadstart = function() {
 				callbacks.onLoadStart(this.readyState);
 			};
 		}
@@ -151,7 +163,7 @@ function $http(url) {
 			 * The request encountered an error
 			 * The HTTP status will be passed to the callback
 			 */
-			client.onerror = function(e) {
+			client.onerror = function() {
 				callbacks.onError(this.status);
 			};
 		}
@@ -161,7 +173,7 @@ function $http(url) {
 		 * If the HTTP status is OK, the response will be passed to the callback
 		 * Otherwise, the HTTP status will be passed to the callback
 		 */
-		client.onload = function(e) {
+		client.onload = function() {
 			if(config.cache && method === Method.GET) {
 				iqwerty.http.Cache().setCache(url, this.response);
 			}
@@ -183,19 +195,6 @@ function $http(url) {
 		client.open(method, url, true);
 		client.send(data);
 	}
-
-
-	/**
-	 * Stores the user defined callbacks
-	 * @type {Object}
-	 */
-	var callbacks = {};
-
-	/**
-	 * Stores the config for this request
-	 * @type {Object}
-	 */
-	var config = {};
 
 
 	return {

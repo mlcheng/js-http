@@ -18,13 +18,15 @@ iqwerty.http = (function() {
 	 * Cache GET requests if specified
 	 */
 	function Cache() {
-		var exports = {};
+		let exports = {};
 
-		exports.getCache = url => Cache.prototype.cached[Object.keys(Cache.prototype.cached).find(key => url === key)];
+		let _cache = Cache.prototype.cached;
+
+		exports.getCache = url => _cache[url];
 
 		exports.setCache = (url, data) => {
 			if(exports.getCache(url) != null) return;
-			Cache.prototype.cached[url] = data;
+			_cache[url] = data;
 		};
 
 		return exports;
@@ -35,7 +37,7 @@ iqwerty.http = (function() {
 
 	return {
 		Request: $http,
-		Cache: Cache
+		Cache
 	};
 })();
 
@@ -57,14 +59,14 @@ iqwerty.http = (function() {
  * @return      Should return nothing
  */
 function $http(url) {
-	var Method = {
+	const Method = {
 		GET: 'get',
 		POST: 'post',
 		PUT: 'put',
 		DELETE: 'delete'
 	};
 
-	var Status = {
+	const Status = {
 		OK: 200
 	};
 
@@ -82,18 +84,6 @@ function $http(url) {
 
 	function request(method, url, args) {
 
-		//Check for cached version first
-		if(method === Method.GET) {
-			var _cache = iqwerty.http.Cache().getCache(url);
-			if(_cache != null) {
-				if(typeof callbacks.onLoad === 'function') {
-					return callbacks.onLoad(_cache);
-				} else {
-					return;
-				}
-			}
-		}
-
 		//The request client; kill IE support
 		var client = new XMLHttpRequest();
 
@@ -107,7 +97,7 @@ function $http(url) {
 		 * There should be no other data to send with the request
 		 */
 		if(method === Method.GET) {
-			// encode the url with the parameters
+			// Encode the url with the parameters
 			url = (function encode(url, args) {
 				if(!args) return url;
 				
@@ -130,6 +120,19 @@ function $http(url) {
 			Object.keys(args).forEach(function(arg) {
 				data.append(arg, args[arg]);
 			});
+		}
+
+
+		// Check for cached version first
+		if(method === Method.GET) {
+			var _cache = iqwerty.http.Cache().getCache(url);
+			if(_cache != null) {
+				if(typeof callbacks.onLoad === 'function') {
+					return callbacks.onLoad(_cache);
+				} else {
+					return;
+				}
+			}
 		}
 		
 		
@@ -202,7 +205,7 @@ function $http(url) {
 		 * Optional. Cache GET requests
 		 * @return {Object} The $http object
 		 */
-		'cache': function() {
+		cache() {
 			config.cache = true;
 			return this;
 		},
@@ -212,7 +215,7 @@ function $http(url) {
 		 * @param  {Function} callback The function to call when the request begins
 		 * @return {Object}            The $http object
 		 */
-		'begin': function(callback) {
+		begin(callback) {
 			callbacks.onLoadStart = callback;
 			return this;
 		},
@@ -223,7 +226,7 @@ function $http(url) {
 		 * Used in file uploads
 		 * @return {Object}            The $http object
 		 */
-		'progress': function(callback) {
+		progress(callback) {
 			callbacks.onProgress = callback;
 			return this;
 		},
@@ -233,7 +236,7 @@ function $http(url) {
 		 * @param  {Function} callback The function to call when the request succeeds
 		 * @return {Object}            The $http object
 		 */
-		'success': function(callback) {
+		success(callback) {
 			callbacks.onLoad = callback;
 			return this;
 		},
@@ -243,7 +246,7 @@ function $http(url) {
 		 * @param  {Function} callback The function to call when the request fails
 		 * @return {Object}            The $http object
 		 */
-		'error': function(callback) {
+		error(callback) {
 			callbacks.onError = callback;
 			return this;
 		},
@@ -252,17 +255,9 @@ function $http(url) {
 		/**
 		 * HTTP methods
 		 */
-		'get': function(args) {
-			return request(Method.GET, url, args);
-		},
-		'post': function(args) {
-			return request(Method.POST, url, args);
-		},
-		'put': function(args) {
-			return request(Method.PUT, url, args);
-		},
-		'delete': function(args) {
-			return request(Method.DELETE, url, args);
-		}
+		'get': args => request(Method.GET, url, args),
+		'post': args => request(Method.POST, url, args),
+		'put': args => request(Method.PUT, url, args),
+		'delete': args => request(Method.DELETE, url, args)
 	};
 }

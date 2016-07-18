@@ -48,11 +48,14 @@ iqwerty.http = (function() {
  *
  * To use the result of the request, add a callback to the beginning of the request
  *
- * .stateChanged(stateChangedCallback) // This is called when the request state changes. The stateChangedCallback will receive a parameter with the current state
+ * .stateChanged(stateChangedCallback)
+ * This is called when the request state changes. The stateChangedCallback will receive a parameter with the current state
  *
- * .success(successCallback) // This is called when the request succeeds. The successCallback will receive a parameter with the JSON response (if applicable) or the plain text response
+ * .success(successCallback)
+ * This is called when the request succeeds. The successCallback will receive a parameter with the JSON response (if applicable) or the plain text response
  *
- * .error(errorCallback) // This is called when the request successfully transfers but failed to receive correct data. The errorCallback will receive an HTTP status code parameter
+ * .error(errorCallback)
+ * This is called when the request successfully transfers but failed to receive correct data. The errorCallback will receive an HTTP status code parameter
  *
  * 
  * @param  {String} url The URL to get asynchronous data from
@@ -74,13 +77,13 @@ function $http(url) {
 	 * Stores the user defined callbacks
 	 * @type {Object}
 	 */
-	var callbacks = {};
+	var _callbacks = {};
 
 	/**
 	 * Stores the config for this request
 	 * @type {Object}
 	 */
-	var config = {};
+	var _config = {};
 
 	function request(method, url, args) {
 
@@ -127,8 +130,8 @@ function $http(url) {
 		if(method === Method.GET) {
 			var _cache = iqwerty.http.Cache().getCache(url);
 			if(_cache != null) {
-				if(typeof callbacks.onLoad === 'function') {
-					return callbacks.onLoad(_cache);
+				if(typeof _callbacks.onLoad === 'function') {
+					return _callbacks.onLoad(_cache);
 				} else {
 					return;
 				}
@@ -143,31 +146,31 @@ function $http(url) {
 		 * Event callbacks are here
 		 */
 		
-		if(typeof callbacks.onLoadStart === 'function') {
+		if(typeof _callbacks.onLoadStart === 'function') {
 			/**
 			 * The request has just been sent.
 			 * The readyState will be passed to the callback
 			 */
 			client.onloadstart = function() {
-				callbacks.onLoadStart(this.readyState);
+				_callbacks.onLoadStart(this.readyState);
 			};
 		}
-		if(typeof callbacks.onProgress === 'function') {
+		if(typeof _callbacks.onProgress === 'function') {
 			/**
 			 * The request is in progress. Used in file uploads or similar
 			 * The ProgressEvent will be passed to the callback
 			 */
 			client.upload.onprogress = function(e) {
-				callbacks.onProgress(e);
+				_callbacks.onProgress(e);
 			};
 		}
-		if(typeof callbacks.onError === 'function') {
+		if(typeof _callbacks.onError === 'function') {
 			/**
 			 * The request encountered an error
 			 * The HTTP status will be passed to the callback
 			 */
 			client.onerror = function() {
-				callbacks.onError(this.status);
+				_callbacks.onError(this.status);
 			};
 		}
 
@@ -177,22 +180,22 @@ function $http(url) {
 		 * Otherwise, the HTTP status will be passed to the callback
 		 */
 		client.onload = function() {
-			if(config.cache && method === Method.GET) {
+			if(_config.cache && method === Method.GET) {
 				iqwerty.http.Cache().setCache(url, this.response);
 			}
-			if(typeof callbacks.onLoad === 'function') {
+			if(typeof _callbacks.onLoad === 'function') {
 				if(this.status === Status.OK) {
-					callbacks.onLoad(this.response);
+					_callbacks.onLoad(this.response);
 				} else {
-					if(typeof callbacks.onError === 'function') {
-						callbacks.onError(this.status);
+					if(typeof _callbacks.onError === 'function') {
+						_callbacks.onError(this.status);
 					}
 				}
 			}
 
 			client = null;
 			data = null;
-			callbacks = null;
+			_callbacks = null;
 		};
 
 		client.open(method, url, true);
@@ -206,7 +209,7 @@ function $http(url) {
 		 * @return {Object} The $http object
 		 */
 		cache() {
-			config.cache = true;
+			_config.cache = true;
 			return this;
 		},
 
@@ -216,7 +219,7 @@ function $http(url) {
 		 * @return {Object}            The $http object
 		 */
 		begin(callback) {
-			callbacks.onLoadStart = callback;
+			_callbacks.onLoadStart = callback;
 			return this;
 		},
 
@@ -227,7 +230,7 @@ function $http(url) {
 		 * @return {Object}            The $http object
 		 */
 		progress(callback) {
-			callbacks.onProgress = callback;
+			_callbacks.onProgress = callback;
 			return this;
 		},
 
@@ -237,7 +240,7 @@ function $http(url) {
 		 * @return {Object}            The $http object
 		 */
 		success(callback) {
-			callbacks.onLoad = callback;
+			_callbacks.onLoad = callback;
 			return this;
 		},
 
@@ -247,7 +250,7 @@ function $http(url) {
 		 * @return {Object}            The $http object
 		 */
 		error(callback) {
-			callbacks.onError = callback;
+			_callbacks.onError = callback;
 			return this;
 		},
 

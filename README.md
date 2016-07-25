@@ -22,7 +22,7 @@ The `get()` parameters specify what parameters to send with the request. `.post(
 ## Advanced usage
 In addition to the `.success()` callback, you may also set the following callbacks
 
-### `begin`
+### `.begin()`
 When the request is just sent, you can receive a callback with the current `readyState`. The `readyState` should be `1`.
 
 ```javascript
@@ -35,7 +35,7 @@ $http("data.php")
 
 The `begin` callback will receive a parameter that specifies the current state of the request.
 
-### `progress`
+### `.progress()`
 If you are uploading a file, you can receive `ProgressEvent` callbacks to get the current status of the upload.
 
 ```javascript
@@ -48,7 +48,7 @@ $http("data.php")
 	.post({"file": new File(["Hello"], "file.txt")});
 ```
 
-### `error`
+### `.error()`
 If the request is sent out but fails to get information, an error is called. Basically, if the HTTP status code isn't 200, your error callback will be executed.
 
 ```javascript
@@ -72,7 +72,7 @@ var callbacks = {
 };
 ```
 
-### `cache`
+### `.cache()`
 If you wish to cache your `GET` requests, simply specify `.cache()` in your request builder
 
 ```javascript

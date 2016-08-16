@@ -264,3 +264,8 @@ function $http(url) {
 		'delete': args => request(Method.DELETE, url, args)
 	};
 }
+
+if(typeof module !== 'undefined') {
+	/* global module */
+	module.exports = iqwerty.http;
+}

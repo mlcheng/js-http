@@ -11,9 +11,9 @@
 
 'use strict';
 
-/* globals require, __dirname, iqwerty */
-const { Test, inject } = require('../../test/test.js');
-inject(__dirname, '../http.js');
+/* globals require */
+const { Test, namespace } = require('../../test/test.js');
+const iqwerty = namespace('http');
 
 
 Test('Cache can store data and persist across calls')

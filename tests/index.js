@@ -11,9 +11,9 @@
 
 'use strict';
 
-/* globals require */
+/* globals require, __dirname */
 const { Test, namespace } = require('../../test/test.js');
-const iqwerty = namespace('http');
+const iqwerty = namespace(`${__dirname}/../`, 'http');
 
 
 Test('Cache can store data and persist across calls')

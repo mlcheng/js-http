@@ -87,10 +87,10 @@ function $http(url) {
 
 	function request(method, url, args) {
 
-		//The request client; kill IE support
+		// The request client; kill IE support
 		var client = new XMLHttpRequest();
 
-		//The data to send with the request; only used when not GET
+		// The data to send with the request; only used when not GET
 		var data;
 
 
@@ -142,64 +142,79 @@ function $http(url) {
 
 
 
+		// Event callbacks are here
+
 		/**
-		 * Event callbacks are here
+		 * The request has just been sent.
+		 * The readyState will be passed to the callback
 		 */
-		
 		if(typeof _callbacks.onLoadStart === 'function') {
-			/**
-			 * The request has just been sent.
-			 * The readyState will be passed to the callback
-			 */
+			
 			client.onloadstart = function() {
 				_callbacks.onLoadStart(this.readyState);
 			};
 		}
+
+
+		/**
+		 * The request is in progress. Used in file uploads or similar
+		 * The ProgressEvent will be passed to the callback
+		 */
 		if(typeof _callbacks.onProgress === 'function') {
-			/**
-			 * The request is in progress. Used in file uploads or similar
-			 * The ProgressEvent will be passed to the callback
-			 */
 			client.upload.onprogress = function(e) {
 				_callbacks.onProgress(e);
 			};
 		}
-		if(typeof _callbacks.onError === 'function') {
+
+
+		return new Promise(function(resolve, reject) {
 			/**
 			 * The request encountered an error
 			 * The HTTP status will be passed to the callback
 			 */
-			client.onerror = function() {
-				_callbacks.onError(this.status);
-			};
-		}
-
-		/**
-		 * The request has finished.
-		 * If the HTTP status is OK, the response will be passed to the callback
-		 * Otherwise, the HTTP status will be passed to the callback
-		 */
-		client.onload = function() {
-			if(_config.cache && method === Method.GET) {
-				iqwerty.http.Cache().setCache(url, this.response);
+			if(typeof _callbacks.onError === 'function') {
+				client.onerror = function() {
+					_callbacks.onError(this.status);
+					reject(this.status);
+				};
 			}
-			if(typeof _callbacks.onLoad === 'function') {
-				if(this.status === Status.OK) {
-					_callbacks.onLoad(this.response);
-				} else {
-					if(typeof _callbacks.onError === 'function') {
-						_callbacks.onError(this.status);
+
+
+			/**
+			 * The request has finished.
+			 * If the HTTP status is OK, the response will be passed to the callback
+			 * Otherwise, the HTTP status will be passed to the callback
+			 */
+			client.onload = function() {
+				if(_config.cache && method === Method.GET) {
+					iqwerty.http.Cache().setCache(url, this.response);
+				}
+
+				/**
+				 * Handle the callbacks
+				 * Note that if the return status is NOT 200, an error will result
+				 */
+				if(typeof _callbacks.onLoad === 'function') {
+					if(this.status === Status.OK) {
+						_callbacks.onLoad(this.response);
+					} else {
+						if(typeof _callbacks.onError === 'function') {
+							_callbacks.onError(this.status);
+						}
 					}
 				}
-			}
 
-			client = null;
-			data = null;
-			_callbacks = null;
-		};
+				// Handle the promise
+				if(this.status === Status.OK) {
+					resolve(this.response);
+				} else {
+					reject(this.status);
+				}
+			};
 
-		client.open(method, url, true);
-		client.send(data);
+			client.open(method, url, true);
+			client.send(data);
+		});
 	}
 
 

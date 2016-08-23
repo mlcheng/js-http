@@ -17,7 +17,7 @@ $http("data.php")
 
 `data.php` is your data source. The `.success()` callback delivers a `response` parameter to your callback. This is called when the request succeeds and the status is OK. The `response` will be parsed as JSON if possible, otherwise plain text will be delivered to your callback.
 
-The `get()` parameters specify what parameters to send with the request. `.post()`, `.put()`, and `.delete()` HTTP methods may also be used. These request methods should be called *last*.
+The `get()` parameters specify what parameters to send with the request. `.post()`, `.put()`, and `.delete()` HTTP methods may also be used. These request methods should be called *last*. After calling the request method, a `Promise` is returned. The `Promise` is resolved when the return status is `200`. It is rejected when the request fails or the return status is not `200`.
 
 ## Advanced usage
 In addition to the `.success()` callback, you may also set the following callbacks

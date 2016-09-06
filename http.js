@@ -133,7 +133,7 @@ function $http(url) {
 				if(typeof _callbacks.onLoad === 'function') {
 					return _callbacks.onLoad(_cache);
 				} else {
-					return;
+					return Promise.resolve(_cache);
 				}
 			}
 		}

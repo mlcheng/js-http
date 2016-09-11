@@ -12,17 +12,17 @@
 'use strict';
 
 /* globals require, __dirname */
-const { Test, namespace } = require('../../test/test.js');
-const iqwerty = namespace(`${__dirname}/../`, 'http');
+const { Test } = require('../../test/test.js');
+const Http = require(`${__dirname}/../http.js`);
 
 
 Test('Cache can store data and persist across calls')
 	.do(() => {
-		iqwerty.http.Cache().setCache('key', 'value');
+		Http.Cache().setCache('key', 'value');
 	})
-	.expect(iqwerty.http.Cache().getCache('key'))
+	.expect(Http.Cache().getCache('key'))
 	.toBe('value');
 
 Test('Getting nonexistent data from cache returns undefined')
-	.expect(iqwerty.http.Cache().getCache('dummy'))
+	.expect(Http.Cache().getCache('dummy'))
 	.toBe(undefined);

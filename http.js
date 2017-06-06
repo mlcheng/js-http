@@ -57,7 +57,7 @@ iqwerty.http = (function() {
  * .error(errorCallback)
  * This is called when the request successfully transfers but failed to receive correct data. The errorCallback will receive an HTTP status code parameter
  *
- * 
+ *
  * @param  {String} url The URL to get asynchronous data from
  * @return      Should return nothing
  */
@@ -103,14 +103,14 @@ function $http(url) {
 			// Encode the url with the parameters
 			url = (function encode(url, args) {
 				if(!args) return url;
-				
+
 				var out = url + '?';
 				var arg_cnt = 0;
 				for(var key in args) {
 					if(args.hasOwnProperty(key)) {
 						if(arg_cnt++) {
 							out += '&';
-						} 
+						}
 						out += encodeURIComponent(key) + '=' + encodeURIComponent(args[key]);
 					}
 				}
@@ -118,7 +118,8 @@ function $http(url) {
 			})(url, args);
 			data = null;
 		} else {
-			// append the parameters as part of FormData
+			if(!args) return;
+			// Append the parameters as part of FormData
 			data = new FormData();
 			Object.keys(args).forEach(function(arg) {
 				data.append(arg, args[arg]);
@@ -137,8 +138,8 @@ function $http(url) {
 				}
 			}
 		}
-		
-		
+
+
 
 
 
@@ -149,7 +150,7 @@ function $http(url) {
 		 * The readyState will be passed to the callback
 		 */
 		if(typeof _callbacks.onLoadStart === 'function') {
-			
+
 			client.onloadstart = function() {
 				_callbacks.onLoadStart(this.readyState);
 			};

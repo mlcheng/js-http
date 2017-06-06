@@ -118,12 +118,13 @@ function $http(url) {
 			})(url, args);
 			data = null;
 		} else {
-			if(!args) return;
-			// Append the parameters as part of FormData
-			data = new FormData();
-			Object.keys(args).forEach(function(arg) {
-				data.append(arg, args[arg]);
-			});
+			if(args) {
+				// Append the parameters as part of FormData
+				data = new FormData();
+				Object.keys(args).forEach(function(arg) {
+					data.append(arg, args[arg]);
+				});
+			}
 		}
 
 

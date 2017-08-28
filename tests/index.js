@@ -12,17 +12,15 @@
 'use strict';
 
 /* globals require, __dirname */
-const { Test } = require('../../test/test.js');
+const { Test } = require('../../janus/janus.js');
 const Http = require(`${__dirname}/../http.js`);
 
 
-Test('Cache can store data and persist across calls')
-	.do(() => {
-		Http.Cache().setCache('key', 'value');
-	})
-	.expect(Http.Cache().getCache('key'))
-	.toBe('value');
+Test('Cache can store data and persist across calls', ({ expect }) => {
+	Http.Cache().setCache('key', 'value');
+	expect(Http.Cache().getCache('key')).toBe('value');
+});
 
-Test('Getting nonexistent data from cache returns undefined')
-	.expect(Http.Cache().getCache('dummy'))
-	.toBe(undefined);
+Test('Getting nonexistent data from cache returns undefined', ({ expect }) => {
+	expect(Http.Cache().getCache('dummy')).toBe(undefined);
+});

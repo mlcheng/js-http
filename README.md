@@ -8,16 +8,24 @@ A demo is available on my [playground](https://www.michaelcheng.us/playground/li
 Usage is extremely simple. To do an asynchronous call, just write
 
 ```javascript
-$http("data.php")
-	.success(function(response) {
+iqwerty.request.request('data.php')
+	.success((response) => {
 		console.log(response);
 	})
-	.get({"param": "value"});
+	.get({ 'param': 'value' });
 ```
 
 `data.php` is your data source. The `.success()` callback delivers a `response` parameter to your callback. This is called when the request succeeds and the status is OK. The `response` will be parsed as JSON if possible, otherwise plain text will be delivered to your callback.
 
 The `get()` parameters specify what parameters to send with the request. `.post()`, `.put()`, and `.delete()` HTTP methods may also be used. These request methods should be called *last*. After calling the request method, a `Promise` is returned. The `Promise` is resolved when the return status is `200`. It is rejected when the request fails or the return status is not `200`.
+
+```javascript
+iqwerty.request.request('data.php')
+	.get({ 'param': 'value' })
+	.then((response) => {
+		console.log(response);
+	});
+```
 
 ## Advanced usage
 In addition to the `.success()` callback, you may also set the following callbacks
@@ -26,9 +34,9 @@ In addition to the `.success()` callback, you may also set the following callbac
 When the request is just sent, you can receive a callback with the current `readyState`. The `readyState` should be `1`.
 
 ```javascript
-$http("data.php")
-	.begin(function(state) {
-		console.log("The request has been sent.");
+iqwerty.request.request('data.php')
+	.begin((state) => {
+		console.log('The request has been sent.');
 	})
 	.get();
 ```
@@ -39,20 +47,20 @@ The `begin` callback will receive a parameter that specifies the current state o
 If you are uploading a file, you can receive `ProgressEvent` callbacks to get the current status of the upload.
 
 ```javascript
-$http("data.php")
-	.progress(function(event) {
+iqwerty.request.request('data.php')
+	.progress((event) => {
 		if(event.lengthComputable) {
-			console.log("Upload status is " + Math.floor((event.loaded/e.total)*100) + "%");
+			console.log(`Upload status is ${Math.floor((event.loaded/e.total)*100)}%`);
 		}
 	})
-	.post({"file": new File(["Hello"], "file.txt")});
+	.post({ 'file': new File(['Hello'], 'file.txt') });
 ```
 
 ### `.error()`
 If the request is sent out but fails to get information, an error is called. Basically, if the HTTP status code isn't 200, your error callback will be executed.
 
 ```javascript
-$http("data.php")
+iqwerty.request.request('data.php')
 	.success(callbacks.success)
 	.error(callbacks.error)
 	.get();
@@ -61,13 +69,13 @@ $http("data.php")
 Where `callbacks` is an object containing your callbacks
 
 ```javascript
-var callbacks = {
-	success: function(response) {
-		console.log("Response is " + response);
+const callbacks = {
+	success: (response) => {
+		console.log(`Response is ${response}`);
 	},
-	
-	error: function(error) {
-		console.log("Error has occurred. Status " + error);
+
+	error: (error) => {
+		console.log(`Error has occurred. Status ${error}`);
 	}
 };
 ```
@@ -76,10 +84,13 @@ var callbacks = {
 If you wish to cache your `GET` requests, simply specify `.cache()` in your request builder
 
 ```javascript
-$http("data.php")
+iqwerty.request.request('data.php')
 	.success(callbacks.success)
 	.cache()
 	.get();
 ```
 
 The next time you request `data.php`, you will retrieve the cached version. Cache invalidation will come soon.
+
+## Legacy support
+The legacy `$http` object is still available. It is an alias for `iqwerty.request.request`.
